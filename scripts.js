@@ -24,17 +24,19 @@ document.getElementById('convertButton').addEventListener('click', () => {
         const sheet = workbook.Sheets[sheetName];
 
         // Configura a célula como texto para evitar a notação científica
-        const cellFormat = { raw: true };
         const rows = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: '', raw: true});
 
         const updatedRows = rows.map(row => {
-            let cardNumber = String(row[0]); // Garante que o número seja tratado como string
+            let cardNumber = String(row[0]).replace(/[^0-9]/g, ''); // Remove caracteres não numéricos e converte para string
 
-            if (formatType === "cartao1" && cardNumber.match(/^\d{13}$/)) {
+            if (formatType === "cartao1") {
+                cardNumber = cardNumber.padStart(13, '0'); // Preenche com zeros à esquerda
                 return [formatCardNumber1(cardNumber)];
-            } else if (formatType === "cpf" && cardNumber.match(/^\d{11}$/)) {
+            } else if (formatType === "cpf") {
+                cardNumber = cardNumber.padStart(11, '0'); // Preenche com zeros à esquerda
                 return [formatCPF(cardNumber)];
-            } else if (formatType === "cartao2" && cardNumber.match(/^\d{12}$/)) {
+            } else if (formatType === "cartao2") {
+                cardNumber = cardNumber.padStart(12, '0'); // Preenche com zeros à esquerda
                 return [formatCardNumber2(cardNumber)];
             }
             return row; // Retorna a linha original se não for válida
