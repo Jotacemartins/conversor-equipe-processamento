@@ -44,7 +44,7 @@ document.getElementById('convertButton').addEventListener('click', () => {
                 cardNumber = cardNumber.padStart(11, '0');
                 return [formatCPF(cardNumber)];
             } else if (formatType === "cartao2") {
-                cardNumber = cardNumber.padStart(12, '0');
+                cardNumber = cardNumber.padStart(10, '0');
                 return [formatCardNumber2(cardNumber)];
             }
 
