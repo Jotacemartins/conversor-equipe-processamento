@@ -1,3 +1,9 @@
+document.getElementById('fileInput').addEventListener('change', () => {
+    // Esconde o botão de download ao selecionar um novo arquivo
+    document.getElementById('downloadLink').style.display = 'none';
+    document.getElementById('loadingMessage').style.display = 'none'; // Esconde a mensagem de carregamento, caso esteja visível
+});
+
 document.getElementById('convertButton').addEventListener('click', () => {
     const fileInput = document.getElementById('fileInput').files[0];
     const formatType = document.getElementById('formatSelect').value;
