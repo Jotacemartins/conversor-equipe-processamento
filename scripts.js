@@ -17,12 +17,12 @@ document.getElementById('convertButton').addEventListener('click', () => {
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
 
-        // Obtém os dados da primeira coluna (números dos cartões)
-        const rows = XLSX.utils.sheet_to_json(sheet, {header: 1});
-        
-        // Formata apenas a coluna dos cartões
+        // Configura a célula como texto para evitar a notação científica
+        const cellFormat = { raw: true };
+        const rows = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: '', raw: true});
+
         const updatedRows = rows.map(row => {
-            let cardNumber = row[0].toString(); // Converte para string
+            let cardNumber = String(row[0]); // Garante que o número seja tratado como string
 
             if (formatType === "cartao1" && cardNumber.match(/^\d{13}$/)) {
                 return [formatCardNumber1(cardNumber)];
@@ -34,12 +34,10 @@ document.getElementById('convertButton').addEventListener('click', () => {
             return row; // Retorna a linha original se não for válida
         });
 
-        // Cria nova planilha
         const newSheet = XLSX.utils.aoa_to_sheet(updatedRows);
         const newWorkbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(newWorkbook, newSheet, sheetName);
 
-        // Gera o arquivo Excel
         const wbout = XLSX.write(newWorkbook, {bookType: 'xlsx', type: 'array'});
         const blob = new Blob([wbout], {type: "application/octet-stream"});
         const url = URL.createObjectURL(blob);
