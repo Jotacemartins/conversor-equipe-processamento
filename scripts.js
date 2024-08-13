@@ -23,22 +23,40 @@ document.getElementById('convertButton').addEventListener('click', () => {
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
 
-        // Configura a célula como texto para evitar a notação científica
         const rows = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: '', raw: true});
 
         const updatedRows = rows.map(row => {
-            let cardNumber = String(row[0]).replace(/[^0-9]/g, ''); // Remove caracteres não numéricos e converte para string
+            let cardNumber = String(row[0]);
 
-            if (formatType === "cartao1") {
-                cardNumber = cardNumber.padStart(13, '0'); // Preenche com zeros à esquerda
-                return [formatCardNumber1(cardNumber)];
-            } else if (formatType === "cpf") {
-                cardNumber = cardNumber.padStart(11, '0'); // Preenche com zeros à esquerda
-                return [formatCPF(cardNumber)];
-            } else if (formatType === "cartao2") {
-                cardNumber = cardNumber.padStart(12, '0'); // Preenche com zeros à esquerda
-                return [formatCardNumber2(cardNumber)];
+            // Verifica e converte a notação científica para número completo
+            if (cardNumber.includes('E')) {
+                cardNumber = Number(cardNumber).toFixed(0);
             }
+
+            // Remove caracteres não numéricos
+            cardNumber = cardNumber.replace(/[^0-9]/g, '');
+
+            // Aplica as máscaras de acordo com o tipo selecionado
+            if (formatType === "cartao1" && cardNumber.length === 13) {
+                return [formatCardNumber1(cardNumber)];
+            } else if (formatType === "cpf" && cardNumber.length === 11) {
+                return [formatCPF(cardNumber)];
+            } else if (formatType === "cartao2" && cardNumber.length === 12) {
+                return [formatCardNumber2(cardNumber)];
+            } else {
+                // Preenche com zeros à esquerda se o número for menor que o esperado
+                if (formatType === "cartao1") {
+                    cardNumber = cardNumber.padStart(13, '0');
+                    return [formatCardNumber1(cardNumber)];
+                } else if (formatType === "cpf") {
+                    cardNumber = cardNumber.padStart(11, '0');
+                    return [formatCPF(cardNumber)];
+                } else if (formatType === "cartao2") {
+                    cardNumber = cardNumber.padStart(12, '0');
+                    return [formatCardNumber2(cardNumber)];
+                }
+            }
+
             return row; // Retorna a linha original se não for válida
         });
 
