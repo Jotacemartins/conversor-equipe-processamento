@@ -26,7 +26,7 @@ document.getElementById('convertButton').addEventListener('click', () => {
 
         const updatedRows = rows.map((row, index) => {
             if (index === 0) {
-                return formatType === 'cpf' ? ['CPF'] : ['Cartão'];
+                return formatType === 'cpf' ? ['CPF'] : formatType === 'cnpj' ? ['CNPJ'] : ['Cartão'];
             }
 
             let cardNumber = String(row[0]);
@@ -46,6 +46,9 @@ document.getElementById('convertButton').addEventListener('click', () => {
             } else if (formatType === "cartao2") {
                 cardNumber = cardNumber.padStart(10, '0');
                 return [formatCardNumber2(cardNumber)];
+            } else if (formatType === "cnpj") {
+                cardNumber = cardNumber.padStart(14, '0');
+                return [formatCNPJ(cardNumber)];
             }
 
             return row;
@@ -81,4 +84,8 @@ function formatCPF(number) {
 
 function formatCardNumber2(number) {
     return `${number.substring(0, 1)}.${number.substring(1, 4)}.${number.substring(4, 7)}.${number.substring(7, 10)}`;
+}
+
+function formatCNPJ(number) {
+    return `${number.substring(0, 2)}.${number.substring(2, 5)}.${number.substring(5, 8)}/${number.substring(8, 12)}-${number.substring(12)}`;
 }
